@@ -1,6 +1,6 @@
-package com.deskvestre.fieldopstracker.domain.repository
+package com.deskvestre.fieldopstracker.root.domain.repository
 
-import com.deskvestre.fieldopstracker.data.local.entity.FieldRecord
+import com.deskvestre.fieldopstracker.FieldRecord
 import kotlinx.coroutines.flow.Flow
 
 interface FieldRecordRepository {

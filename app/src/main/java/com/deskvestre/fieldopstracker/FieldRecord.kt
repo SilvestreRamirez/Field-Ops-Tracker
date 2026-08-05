@@ -1,4 +1,4 @@
-package com.deskvestre.fieldopstracker.data.local.entity
+package com.deskvestre.fieldopstracker
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

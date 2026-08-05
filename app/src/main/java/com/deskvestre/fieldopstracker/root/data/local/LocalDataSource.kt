@@ -1,7 +1,7 @@
-package com.deskvestre.fieldopstracker.data.local
+package com.deskvestre.fieldopstracker.root.data.local
 
-import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
-import com.deskvestre.fieldopstracker.data.local.entity.FieldRecord
+import com.deskvestre.fieldopstracker.FieldRecordDao
+import com.deskvestre.fieldopstracker.FieldRecord
 
 class LocalDataSource(private val fieldRecordDao: FieldRecordDao) {
 

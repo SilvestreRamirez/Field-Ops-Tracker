@@ -1,7 +1,7 @@
-package com.deskvestre.fieldopstracker.domain.usecase
+package com.deskvestre.fieldopstracker.root.domain.usecase
 
-import com.deskvestre.fieldopstracker.data.local.entity.FieldRecord
-import com.deskvestre.fieldopstracker.domain.repository.FieldRecordRepository
+import com.deskvestre.fieldopstracker.FieldRecord
+import com.deskvestre.fieldopstracker.root.domain.repository.FieldRecordRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetFieldRecordsUseCase(private val fieldRecordRepository: FieldRecordRepository) {
