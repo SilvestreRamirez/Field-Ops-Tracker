@@ -14,26 +14,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.deskvestre.fieldopstracker.AppBase
 import com.deskvestre.fieldopstracker.MainViewModel
-import com.deskvestre.fieldopstracker.MainViewModelFactory
 import com.deskvestre.fieldopstracker.root.ui.theme.FieldOpsTrackerTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {  // sin @Composable
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val appContainer = (application as AppBase).container
-
-        val viewModel: MainViewModel by viewModels {
-            MainViewModelFactory(appContainer.repository)
-        }
-
         setContent {
             FieldOpsTrackerTheme {
+                val viewModel: MainViewModel = hiltViewModel()
+
                 val pending by viewModel.pendingFieldRecords.collectAsState()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

@@ -1,11 +1,11 @@
 package com.deskvestre.fieldopstracker
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class AppBase : Application() {
-    lateinit var container: AppContainer
     override fun onCreate() {
         super.onCreate()
-        container = AppContainer(this)
     }
 }

@@ -1,9 +1,10 @@
 package com.deskvestre.fieldopstracker
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
-class FieldRecordRepository(
+class FieldRecordRepository @Inject constructor(
     private val dao: FieldRecordDao
 ) {
     fun observePending(): Flow<List<FieldRecord>> = dao.getAllPending()
