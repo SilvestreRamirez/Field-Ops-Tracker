@@ -1,5 +1,7 @@
 package com.deskvestre.fieldopstracker
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,13 @@ class MainViewModel @Inject constructor(
     fun add(record: FieldRecord) {
         viewModelScope.launch {
             repository.add(record)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun sync() {
+        viewModelScope.launch {
+            repository.sync()
         }
     }
 }
