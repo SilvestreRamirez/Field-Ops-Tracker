@@ -1,4 +1,4 @@
-package com.deskvestre.fieldopstracker.root.ui.theme
+package com.deskvestre.fieldopstracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

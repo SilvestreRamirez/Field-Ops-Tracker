@@ -1,7 +1,9 @@
-package com.deskvestre.fieldopstracker
+package com.deskvestre.fieldopstracker.di
 
 import android.content.Context
 import androidx.room.Room
+import com.deskvestre.fieldopstracker.data.local.AppDatabase
+import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,5 +1,6 @@
-package com.deskvestre.fieldopstracker
+package com.deskvestre.fieldopstracker.data.remote.api
 
+import com.deskvestre.fieldopstracker.data.remote.dto.FieldRecordDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

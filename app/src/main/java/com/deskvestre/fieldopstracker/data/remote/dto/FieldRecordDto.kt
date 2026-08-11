@@ -1,4 +1,4 @@
-package com.deskvestre.fieldopstracker
+package com.deskvestre.fieldopstracker.data.remote.dto
 
 data class FieldRecordDto(
     val id: String,

@@ -1,5 +1,6 @@
-package com.deskvestre.fieldopstracker
+package com.deskvestre.fieldopstracker.di
 
+import com.deskvestre.fieldopstracker.data.remote.api.FieldOpsApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
