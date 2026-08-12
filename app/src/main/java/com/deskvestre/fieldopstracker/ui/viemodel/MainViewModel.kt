@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
-import com.deskvestre.fieldopstracker.domain.repository.FieldRecordRepository
+import com.deskvestre.fieldopstracker.domain.usecase.AddFieldRecordUseCase
+import com.deskvestre.fieldopstracker.domain.usecase.GetFieldRecordUseCase
+import com.deskvestre.fieldopstracker.domain.usecase.SyncFieldRecordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,10 +17,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: FieldRecordRepository
+    private val addFieldRecordUseCase: AddFieldRecordUseCase,
+    private val syncFieldRecordUseCase: SyncFieldRecordUseCase,
+    private val getFieldRecordsUseCase: GetFieldRecordUseCase,
 ) : ViewModel() {
 
-    val pendingFieldRecords: StateFlow<List<FieldRecord>> = repository.observePending().stateIn(
+    val pendingFieldRecords: StateFlow<List<FieldRecord>> = getFieldRecordsUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.Companion.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -26,14 +30,14 @@ class MainViewModel @Inject constructor(
 
     fun add(record: FieldRecord) {
         viewModelScope.launch {
-            repository.add(record)
+            addFieldRecordUseCase(record)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun sync() {
         viewModelScope.launch {
-            repository.sync()
+            syncFieldRecordUseCase()
         }
     }
 }
