@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deskvestre.fieldopstracker.ui.theme.FieldOpsTrackerTheme
+import com.deskvestre.fieldopstracker.ui.viemodel.FieldRecordUiState
 import com.deskvestre.fieldopstracker.ui.viemodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,11 +34,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FieldOpsTrackerTheme {
-                val viewModel: MainViewModel = hiltViewModel()
-
-                val pending by viewModel.pendingFieldRecords.collectAsState()
-
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val viewModel: MainViewModel = hiltViewModel()
+                    val uiState by viewModel.uiState.collectAsState()
+                    val syncState by viewModel.syncState.collectAsState()
+
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)
@@ -50,9 +52,34 @@ class MainActivity : ComponentActivity() {
                         SyncButton(
                             onClick = { viewModel.sync() }
                         )
-                        pending.forEach {
-                            Text(text = it.toString())
+
+                        if (syncState.isSyncing) {
+                            CircularProgressIndicator()
                         }
+
+                        syncState.syncError?.let { error ->
+                            Text(text = " Error to sync $error")
+
+                        }
+
+                        when (uiState) {
+                            is FieldRecordUiState.Loading -> {
+                                Text(text = "Loading...")
+                            }
+
+                            is FieldRecordUiState.Success -> {
+                                val records = (uiState as FieldRecordUiState.Success).records
+                                records.forEach {
+                                    Text(text = it.toString())
+                                }
+                            }
+
+                            is FieldRecordUiState.Error -> {
+                                Text(text = "Error: ${(uiState as FieldRecordUiState.Error).message}")
+                            }
+
+                        }
+
                     }
                 }
             }
