@@ -12,5 +12,6 @@ data class FieldRecordEntity(
     val gpsLat: Double,
     val gpsLng: Double,
     val notes: String,
-    val timestamp: Long
+    val timestamp: Long,
+    val isSynced: Boolean = false,
 )

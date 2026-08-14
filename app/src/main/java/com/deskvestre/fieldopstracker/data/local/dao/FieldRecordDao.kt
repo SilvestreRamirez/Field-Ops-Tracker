@@ -13,10 +13,13 @@ interface FieldRecordDao {
     @Query("SELECT * FROM field_records")
     fun getAll(): Flow<List<FieldRecordEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(fieldRecord: FieldRecordEntity): Long
 
-    @Query("SELECT * FROM field_records where serverId is null")
+    @Query("SELECT * FROM field_records where isSynced = 0")
     fun getAllPending(): Flow<List<FieldRecordEntity>>
+
+    @Query("SELECT * FROM field_records where serverId = :id")
+    suspend fun getByServerId(id: String): FieldRecordEntity?
 
 }

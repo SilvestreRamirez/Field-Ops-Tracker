@@ -19,7 +19,8 @@ fun FieldRecordDto.toDomain(): FieldRecord {
             Instant.parse(createdAt).toEpochMilli()
         } catch (e: Exception) {
             System.currentTimeMillis()
-        }
+        },
+        isSynced = true
     )
 }
 

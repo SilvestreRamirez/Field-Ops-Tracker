@@ -20,10 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.deskvestre.fieldopstracker.ui.theme.FieldOpsTrackerTheme
 import com.deskvestre.fieldopstracker.ui.viemodel.FieldRecordUiState
 import com.deskvestre.fieldopstracker.ui.viemodel.MainViewModel
+import com.deskvestre.fieldopstracker.workers.SyncWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -32,6 +39,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {  // sin @Composable
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        //make sync request
+        val syncRequest = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            ).build()
+        //enqueue task to sync
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "field_record_sync",
+            ExistingPeriodicWorkPolicy.KEEP,
+            syncRequest
+        )
+
         setContent {
             FieldOpsTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
