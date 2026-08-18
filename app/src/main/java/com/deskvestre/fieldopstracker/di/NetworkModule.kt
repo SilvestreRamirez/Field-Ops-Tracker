@@ -18,7 +18,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .baseUrl("https://overlaid-prepay-napped.ngrok-free.dev/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

@@ -7,10 +7,10 @@ import retrofit2.http.POST
 
 interface FieldOpsApi {
 
-    @GET("todos")
+    @GET("records/")
     suspend fun getRemoteRecords(): List<FieldRecordDto>
 
-    @POST("records")
+    @POST("records/")
     suspend fun uploadRecord(@Body record: FieldRecordDto): FieldRecordDto
 
 }
