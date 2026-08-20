@@ -22,4 +22,7 @@ interface FieldRecordDao {
     @Query("SELECT * FROM field_records where serverId = :id")
     suspend fun getByServerId(id: String): FieldRecordEntity?
 
+    @Query("SELECT COUNT(*) FROM field_records WHERE isSynced = 0")
+    suspend fun countRecordToSync(): Int
+
 }
