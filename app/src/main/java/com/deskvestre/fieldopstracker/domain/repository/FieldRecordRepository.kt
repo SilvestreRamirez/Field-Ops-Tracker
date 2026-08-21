@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FieldRecordRepository {
     fun observePending(): Flow<List<FieldRecord>>
+    fun observeAll(): Flow<List<FieldRecord>>
     suspend fun add(record: FieldRecord)
     suspend fun sync()
 }

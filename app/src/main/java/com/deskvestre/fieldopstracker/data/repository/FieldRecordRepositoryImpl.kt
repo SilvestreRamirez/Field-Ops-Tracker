@@ -22,6 +22,10 @@ class FieldRecordRepositoryImpl @Inject constructor(
     override fun observePending(): Flow<List<FieldRecord>> =
         dao.getAllPending().map { entities -> entities.map { it.toDomain() } }
 
+    override fun observeAll(): Flow<List<FieldRecord>> =
+        dao.getAll().map { entities -> entities.map { it.toDomain() } }
+
+
     override suspend fun add(record: FieldRecord) {
         dao.insert(record.toEntity())
     }

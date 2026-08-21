@@ -12,8 +12,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -127,8 +131,11 @@ class MainActivity : ComponentActivity() {
 
                             is FieldRecordUiState.Success -> {
                                 val records = (uiState as FieldRecordUiState.Success).records
-                                records.forEach {
-                                    Text(text = it.toString())
+                                Text(text = "Records size: ${records.size}")
+                                LazyColumn {
+                                    items(records, key = { it.id }) { record ->
+                                        FieldRecordItem(record)
+                                    }
                                 }
                             }
 
@@ -195,6 +202,11 @@ fun MainPreview() {
                 SyncButton(
                     onClick = { }
                 )
+                LazyColumn(
+                    modifier = Modifier.fillMaxHeight().fillMaxWidth()
+                ) {
+
+                }
             }
 
         }

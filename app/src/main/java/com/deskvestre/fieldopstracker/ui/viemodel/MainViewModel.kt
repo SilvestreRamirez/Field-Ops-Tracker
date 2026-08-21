@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import com.deskvestre.fieldopstracker.domain.usecase.AddFieldRecordUseCase
-import com.deskvestre.fieldopstracker.domain.usecase.GetFieldRecordUseCase
+import com.deskvestre.fieldopstracker.domain.usecase.GetAllFieldRecordUseCase
 import com.deskvestre.fieldopstracker.domain.usecase.SyncFieldRecordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,11 +23,11 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val addFieldRecordUseCase: AddFieldRecordUseCase,
     private val syncFieldRecordUseCase: SyncFieldRecordUseCase,
-    private val getFieldRecordsUseCase: GetFieldRecordUseCase,
+    private val getAllFieldRecordsUseCase: GetAllFieldRecordUseCase
 ) : ViewModel() {
 
     val uiState: StateFlow<FieldRecordUiState> =
-        getFieldRecordsUseCase()
+        getAllFieldRecordsUseCase()
             .map<List<FieldRecord>, FieldRecordUiState> { records ->
                 FieldRecordUiState.Success(records)
             }
