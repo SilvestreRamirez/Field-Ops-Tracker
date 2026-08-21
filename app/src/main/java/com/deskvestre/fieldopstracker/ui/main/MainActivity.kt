@@ -30,11 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.deskvestre.fieldopstracker.ui.navhost.Routes
 import com.deskvestre.fieldopstracker.ui.theme.FieldOpsTrackerTheme
 import com.deskvestre.fieldopstracker.ui.viemodel.FieldRecordUiState
 import com.deskvestre.fieldopstracker.ui.viemodel.MainViewModel
@@ -96,57 +100,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FieldOpsTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val viewModel: MainViewModel = hiltViewModel()
-                    val uiState by viewModel.uiState.collectAsState()
-                    val syncState by viewModel.syncState.collectAsState()
-
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Greeting(
-                            name = "Android",
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                        SyncButton(
-                            onClick = { viewModel.sync() }
-                        )
-
-                        if (syncState.isSyncing) {
-                            CircularProgressIndicator()
-                        }
-
-                        syncState.syncError?.let { error ->
-                            Text(text = " Error to sync $error")
-
-                        }
-
-                        when (uiState) {
-                            is FieldRecordUiState.Loading -> {
-                                Text(text = "Loading...")
-                            }
-
-                            is FieldRecordUiState.Success -> {
-                                val records = (uiState as FieldRecordUiState.Success).records
-                                Text(text = "Records size: ${records.size}")
-                                LazyColumn {
-                                    items(records, key = { it.id }) { record ->
-                                        FieldRecordItem(record)
-                                    }
-                                }
-                            }
-
-                            is FieldRecordUiState.Error -> {
-                                Text(text = "Error: ${(uiState as FieldRecordUiState.Error).message}")
-                            }
-
-                        }
-
+                val navController = rememberNavController()
+                val viewModel: MainViewModel = hiltViewModel()
+                NavHost(navController = navController, startDestination = Routes.LIST) {
+                    composable(Routes.LIST) {
+                        FieldRecordList(navController, viewModel)
+                    }
+                    composable(Routes.ADD_RECORD) {
+                        AddRecord(navController, viewModel)
                     }
                 }
+
             }
         }
     }
@@ -203,7 +167,9 @@ fun MainPreview() {
                     onClick = { }
                 )
                 LazyColumn(
-                    modifier = Modifier.fillMaxHeight().fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
                 ) {
 
                 }
