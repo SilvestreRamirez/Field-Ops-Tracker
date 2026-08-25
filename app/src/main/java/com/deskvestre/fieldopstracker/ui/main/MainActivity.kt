@@ -33,11 +33,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.deskvestre.fieldopstracker.ui.navhost.Routes
 import com.deskvestre.fieldopstracker.ui.theme.FieldOpsTrackerTheme
 import com.deskvestre.fieldopstracker.ui.viemodel.FieldRecordUiState
@@ -68,7 +70,13 @@ class MainActivity : ComponentActivity() {
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
-            ).build()
+            )
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                WorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
+            .build()
         //enqueue task to sync
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "field_record_sync",

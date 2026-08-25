@@ -8,5 +8,5 @@ interface FieldRecordRepository {
     fun observePending(): Flow<List<FieldRecord>>
     fun observeAll(): Flow<List<FieldRecord>>
     suspend fun add(record: FieldRecord)
-    suspend fun sync()
+    suspend fun sync(): Boolean
 }

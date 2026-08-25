@@ -9,7 +9,7 @@ class SyncFieldRecordUseCase @Inject constructor(
     private val repository: FieldRecordRepository
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend operator fun invoke() {
+    suspend operator fun invoke(): Boolean {
         return repository.sync()
     }
 }

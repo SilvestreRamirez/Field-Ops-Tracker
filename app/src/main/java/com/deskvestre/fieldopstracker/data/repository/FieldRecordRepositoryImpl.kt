@@ -31,7 +31,8 @@ class FieldRecordRepositoryImpl @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun sync() {
+    override suspend fun sync(): Boolean {
+        var hasChanges = false
         //upload pending records
         val pendingRecords = dao.getAllPending().first()
         pendingRecords.forEach { entity ->
@@ -46,12 +47,24 @@ class FieldRecordRepositoryImpl @Inject constructor(
             val local = dao.getByServerId(remote.serverId ?: "")?.toDomain()
 
             when {
-                local == null -> dao.insert(remote.toEntity())
-                local.isSynced -> dao.insert(remote.copy(id = local.id).toEntity())
-                remote.timestamp > local.timestamp -> dao.insert(
-                    remote.copy(id = local.id).toEntity()
-                )
+                local == null -> {
+                    dao.insert(remote.toEntity())
+                    hasChanges = true
+                }
+
+                local.isSynced -> {
+                    dao.insert(remote.copy(id = local.id).toEntity())
+                    hasChanges = true
+                }
+
+                remote.timestamp > local.timestamp -> {
+                    dao.insert(
+                        remote.copy(id = local.id).toEntity()
+                    )
+                    hasChanges = true
+                }
             }
         }
+        return hasChanges
     }
 }
