@@ -80,4 +80,9 @@ dependencies {
 
     //navigation compose
     implementation(libs.androidx.navigation.compose)
+
+    //Testing
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
