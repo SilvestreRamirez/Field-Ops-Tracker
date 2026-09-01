@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.deskvestre.fieldopstracker.ui.navhost.Routes
 import com.deskvestre.fieldopstracker.ui.viemodel.FieldRecordUiState
 import com.deskvestre.fieldopstracker.ui.viemodel.MainViewModel
+import com.deskvestre.fieldopstracker.ui.viemodel.SyncState
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -32,10 +33,26 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
     val uiState by viewModel.uiState.collectAsState()
     val syncState by viewModel.syncState.collectAsState()
 
+    FieldRecordListContent(
+        uiState = uiState,
+        syncState = syncState,
+        onSyncClick = { viewModel.sync() },
+        onAddClick = { navController.navigate(Routes.ADD_RECORD) }
+    )
+
+}
+
+@Composable
+fun FieldRecordListContent(
+    uiState: FieldRecordUiState,
+    syncState: SyncState,
+    onSyncClick: () -> Unit,
+    onAddClick: () -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate(Routes.ADD_RECORD) }) {
+            FloatingActionButton(onClick = onAddClick) {
                 Icon(Icons.Default.Add, contentDescription = "Add record")
             }
         }
@@ -51,7 +68,7 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
                 modifier = Modifier.padding(innerPadding)
             )
             SyncButton(
-                onClick = { viewModel.sync() }
+                onClick = onSyncClick
             )
 
             if (syncState.isSyncing) {
@@ -69,7 +86,7 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
                 }
 
                 is FieldRecordUiState.Success -> {
-                    val records = (uiState as FieldRecordUiState.Success).records
+                    val records = uiState.records
                     Text(text = "Records size: ${records.size}")
                     LazyColumn {
                         items(records, key = { it.id }) { record ->
@@ -79,12 +96,11 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
                 }
 
                 is FieldRecordUiState.Error -> {
-                    Text(text = "Error: ${(uiState as FieldRecordUiState.Error).message}")
+                    Text(text = "Error: ${uiState.message}")
                 }
 
             }
 
         }
     }
-
 }

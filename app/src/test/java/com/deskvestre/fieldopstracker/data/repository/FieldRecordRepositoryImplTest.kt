@@ -4,6 +4,7 @@ import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import com.deskvestre.fieldopstracker.data.local.entity.FieldRecordEntity
 import com.deskvestre.fieldopstracker.data.remote.api.FieldOpsApi
 import com.deskvestre.fieldopstracker.data.remote.dto.FieldRecordDto
+import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -67,5 +68,24 @@ class FieldRecordRepositoryImplTest {
         repository.sync()
 
         coVerify { dao.insert(match { it.notes == "Note updated from server" }) }
+    }
+
+    @Test
+    fun `Add map domain record to entity and insert it`() = runTest {
+        coEvery { dao.insert(any()) } returns 1L
+        repository.add(
+            FieldRecord(
+                id = 0,
+                localId = "abc",
+                serverId = null,
+                gpsLat = 1.0,
+                gpsLng = 2.0,
+                notes = "test",
+                timestamp = 100L,
+                isSynced = false
+            )
+        )
+
+        coVerify { dao.insert(match { it.localId == "abc" && it.notes == "test" }) }
     }
 }
