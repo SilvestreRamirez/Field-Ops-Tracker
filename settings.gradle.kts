@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Field Ops Tracker"
 include(":app")
- 
+include(":baselineprofile")
