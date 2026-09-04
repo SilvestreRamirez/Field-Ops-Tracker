@@ -90,4 +90,7 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.test.runner)
+
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
 }

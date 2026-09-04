@@ -9,12 +9,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,12 +34,20 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
 
     val uiState by viewModel.uiState.collectAsState()
     val syncState by viewModel.syncState.collectAsState()
+    val token by viewModel.token.collectAsState()
+
+    //get token from viewmodel
+    LaunchedEffect(Unit) {
+        viewModel.getToken()
+    }
 
     FieldRecordListContent(
         uiState = uiState,
         syncState = syncState,
+        token = token,
         onSyncClick = { viewModel.sync() },
-        onAddClick = { navController.navigate(Routes.ADD_RECORD) }
+        onAddClick = { navController.navigate(Routes.ADD_RECORD) },
+        onAddTokenManualClick = { viewModel.addManualToken() }
     )
 
 }
@@ -46,8 +56,10 @@ fun FieldRecordList(navController: NavHostController, viewModel: MainViewModel) 
 fun FieldRecordListContent(
     uiState: FieldRecordUiState,
     syncState: SyncState,
+    token: String?,
     onSyncClick: () -> Unit,
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    onAddTokenManualClick: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -67,6 +79,16 @@ fun FieldRecordListContent(
                 name = "Android",
                 modifier = Modifier.padding(innerPadding)
             )
+            Button(
+                onClick = onAddTokenManualClick
+            ) {
+                Text(text = "Save manual token")
+            }
+
+            token?.let {
+                Text(text = "Token: $it")
+            }
+
             SyncButton(
                 onClick = onSyncClick
             )

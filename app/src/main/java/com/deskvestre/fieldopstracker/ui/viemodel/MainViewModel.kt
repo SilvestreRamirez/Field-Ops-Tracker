@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import com.deskvestre.fieldopstracker.domain.usecase.AddFieldRecordUseCase
+import com.deskvestre.fieldopstracker.domain.usecase.AddTokenUseCase
 import com.deskvestre.fieldopstracker.domain.usecase.GetAllFieldRecordUseCase
+import com.deskvestre.fieldopstracker.domain.usecase.GetTokenUseCase
 import com.deskvestre.fieldopstracker.domain.usecase.SyncFieldRecordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val addFieldRecordUseCase: AddFieldRecordUseCase,
     private val syncFieldRecordUseCase: SyncFieldRecordUseCase,
-    private val getAllFieldRecordsUseCase: GetAllFieldRecordUseCase
+    private val getAllFieldRecordsUseCase: GetAllFieldRecordUseCase,
+    private val getTokenUseCase: GetTokenUseCase,
+    private val addTokenUseCase: AddTokenUseCase
 ) : ViewModel() {
 
     val uiState: StateFlow<FieldRecordUiState> =
@@ -43,6 +47,9 @@ class MainViewModel @Inject constructor(
     private val _syncState = MutableStateFlow(SyncState())
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
+    private val _token = MutableStateFlow<String?>(null)
+    val token: StateFlow<String?> = _token.asStateFlow()
+
     fun add(record: FieldRecord) {
         viewModelScope.launch {
             addFieldRecordUseCase(record)
@@ -60,6 +67,21 @@ class MainViewModel @Inject constructor(
                 _syncState.value =
                     SyncState(isSyncing = false, syncError = e.message ?: "Unknown Error")
             }
+        }
+    }
+
+
+    fun addManualToken() {
+        viewModelScope.launch {
+            addTokenUseCase("test_token_encrypted")
+            //get token
+            _token.value = getTokenUseCase()
+        }
+    }
+
+    fun getToken() {
+        viewModelScope.launch {
+            _token.value = getTokenUseCase()
         }
     }
 }
