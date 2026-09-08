@@ -1,5 +1,6 @@
 package com.deskvestre.fieldopstracker.di
 
+import com.deskvestre.fieldopstracker.BuildConfig
 import com.deskvestre.fieldopstracker.data.remote.api.FieldOpsApi
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://overlaid-prepay-napped.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

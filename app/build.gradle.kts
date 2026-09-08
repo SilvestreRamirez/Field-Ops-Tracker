@@ -31,13 +31,39 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://overlaid-prepay-napped.ngrok-free.dev/\""
+            )
+        }
+        create("prod") {
+            dimension = "environment"
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://overlaid-prepay-napped.ngrok-free.dev\""
+            )
+        }
+
+    }
+
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
