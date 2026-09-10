@@ -15,11 +15,15 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
+import javax.inject.Singleton
 
+private val Context.dataStore by preferencesDataStore(name = "secure_prefs")
+
+@Singleton
 class SecureTokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val Context.dataStore by preferencesDataStore(name = "secure_prefs")
+
     private val TOKEN_KEY = stringPreferencesKey("encrypted_token")
 
     private val keyAlias = "field_ops_token_key"

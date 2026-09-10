@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
+import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import com.deskvestre.fieldopstracker.domain.usecase.AddFieldRecordUseCase
 import com.deskvestre.fieldopstracker.domain.usecase.AddTokenUseCase
 import com.deskvestre.fieldopstracker.domain.usecase.GetAllFieldRecordUseCase
@@ -60,12 +61,19 @@ class MainViewModel @Inject constructor(
     fun sync() {
         viewModelScope.launch {
             _syncState.value = SyncState(isSyncing = true)
-            try {
-                syncFieldRecordUseCase()
-                _syncState.value = SyncState(isSyncing = false)
-            } catch (e: Exception) {
-                _syncState.value =
-                    SyncState(isSyncing = false, syncError = e.message ?: "Unknown Error")
+            when (val result = syncFieldRecordUseCase()) {
+                is SyncResult.Success -> _syncState.value = SyncState(isSyncing = false)
+                is SyncResult.ServerError -> _syncState.value =
+                    SyncState(
+                        isSyncing = false,
+                        syncError = SyncError.Server(result.code, result.message)
+                    )
+
+                is SyncResult.NetworkError -> _syncState.value =
+                    SyncState(isSyncing = false, syncError = SyncError.Network(result.message))
+
+                is SyncResult.ParsingError -> _syncState.value =
+                    SyncState(isSyncing = false, syncError = SyncError.Parsing(result.message))
             }
         }
     }

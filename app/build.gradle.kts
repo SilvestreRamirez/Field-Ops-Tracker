@@ -104,6 +104,7 @@ dependencies {
     //Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
     //work manager
     implementation(libs.androidx.work.runtime.ktx)

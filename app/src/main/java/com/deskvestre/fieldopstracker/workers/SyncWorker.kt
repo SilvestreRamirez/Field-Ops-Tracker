@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import com.deskvestre.fieldopstracker.domain.usecase.SyncFieldRecordUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -24,19 +25,27 @@ class SyncWorker @AssistedInject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun doWork(): Result {
-        return try {
-            val hasChanges = syncFieldRecordUseCase()
-            if (hasChanges) {
-                showChangeNotification()
+        return when (val result = syncFieldRecordUseCase()) {
+            is SyncResult.Success -> {
+                if (result.hasChanges) {
+                    showRemoteChangesNotification()
+                }
+                Result.success()
             }
-            Result.success()
-        } catch (e: Exception) {
-            Result.retry()
+            is SyncResult.NetworkError -> {
+                Result.retry()
+            }
+            is SyncResult.ServerError -> {
+                if (result.code in 500..599) Result.retry() else Result.failure()
+            }
+            is SyncResult.ParsingError -> {
+                Result.failure()
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun showChangeNotification() {
+    private fun showRemoteChangesNotification() {
         val channelId = "change_notification"
         val manager = applicationContext.getSystemService(NotificationManager::class.java)
 

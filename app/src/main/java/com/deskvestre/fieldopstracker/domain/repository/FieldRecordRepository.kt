@@ -1,12 +1,14 @@
 package com.deskvestre.fieldopstracker.domain.repository
 
 
+import com.deskvestre.fieldopstracker.data.remote.NetworkResult
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
+import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow
 
 interface FieldRecordRepository {
     fun observePending(): Flow<List<FieldRecord>>
     fun observeAll(): Flow<List<FieldRecord>>
     suspend fun add(record: FieldRecord)
-    suspend fun sync(): Boolean
+    suspend fun sync(): SyncResult
 }

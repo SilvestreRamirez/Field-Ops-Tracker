@@ -6,9 +6,12 @@ import com.deskvestre.fieldopstracker.data.remote.api.FieldOpsApi
 import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import com.deskvestre.fieldopstracker.data.local.mappers.toDomain
 import com.deskvestre.fieldopstracker.data.local.mappers.toEntity
+import com.deskvestre.fieldopstracker.data.remote.NetworkResult
 import com.deskvestre.fieldopstracker.data.remote.mappers.toDomain
 import com.deskvestre.fieldopstracker.data.remote.mappers.toDto
+import com.deskvestre.fieldopstracker.data.remote.safeApiCall
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
+import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import com.deskvestre.fieldopstracker.domain.repository.FieldRecordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -31,40 +34,54 @@ class FieldRecordRepositoryImpl @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun sync(): Boolean {
-        var hasChanges = false
-        //upload pending records
-        val pendingRecords = dao.getAllPending().first()
-        pendingRecords.forEach { entity ->
-            val record = entity.toDomain()
-            val dtoUploaded = api.uploadRecord(record.toDto())
-            dao.insert(record.copy(serverId = dtoUploaded.id, isSynced = true).toEntity())
-        }
-        //download record from server and  fix conflicts
-        val remoteRecords = api.getRemoteRecords()
-        remoteRecords.forEach { dto ->
-            val remote = dto.toDomain()
-            val local = dao.getByServerId(remote.serverId ?: "")?.toDomain()
-
-            when {
-                local == null -> {
-                    dao.insert(remote.toEntity())
-                    hasChanges = true
-                }
-
-                local.isSynced -> {
-                    dao.insert(remote.copy(id = local.id).toEntity())
-                    hasChanges = true
-                }
-
-                remote.timestamp > local.timestamp -> {
-                    dao.insert(
-                        remote.copy(id = local.id).toEntity()
-                    )
-                    hasChanges = true
-                }
+    override suspend fun sync(): SyncResult {
+        val uploadResult = safeApiCall {
+            val pendingRecords = dao.getAllPending().first()
+            pendingRecords.forEach { entity ->
+                val record = entity.toDomain()
+                val dtoUploaded = api.uploadRecord(record.toDto())
+                dao.insert(record.copy(serverId = dtoUploaded.id, isSynced = true).toEntity())
             }
         }
-        return hasChanges
+
+        if (uploadResult !is NetworkResult.Success) {
+            return uploadResult.toSyncResult()
+        }
+
+        val downloadResult = safeApiCall { api.getRemoteRecords() }
+
+        return when (downloadResult) {
+            is NetworkResult.Success -> {
+                var hasChanges = false
+                downloadResult.data.forEach { dto ->
+                    val remote = dto.toDomain()
+                    val local = dao.getByServerId(remote.serverId ?: "")?.toDomain()
+
+                    when {
+                        local == null -> {
+                            dao.insert(remote.toEntity())
+                            hasChanges = true
+                        }
+                        local.isSynced -> {
+                            dao.insert(remote.copy(id = local.id).toEntity())
+                            hasChanges = true
+                        }
+                        remote.timestamp > local.timestamp -> {
+                            dao.insert(remote.copy(id = local.id).toEntity())
+                            hasChanges = true
+                        }
+                    }
+                }
+                SyncResult.Success(hasChanges)
+            }
+            else -> downloadResult.toSyncResult()
+        }
+    }
+
+    private fun <T> NetworkResult<T>.toSyncResult(): SyncResult = when (this) {
+        is NetworkResult.Success -> SyncResult.Success(true)
+        is NetworkResult.ServerError -> SyncResult.ServerError(code, message)
+        is NetworkResult.NetworkError -> SyncResult.NetworkError(exception.message ?: "Sin conexión")
+        is NetworkResult.ParsingError -> SyncResult.ParsingError(message)
     }
 }
