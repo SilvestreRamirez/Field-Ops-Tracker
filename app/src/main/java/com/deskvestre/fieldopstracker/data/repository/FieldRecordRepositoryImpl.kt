@@ -6,10 +6,10 @@ import com.deskvestre.fieldopstracker.data.remote.api.FieldOpsApi
 import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import com.deskvestre.fieldopstracker.data.local.mappers.toDomain
 import com.deskvestre.fieldopstracker.data.local.mappers.toEntity
-import com.deskvestre.fieldopstracker.data.remote.NetworkResult
+import com.deskvestre.fieldopstracker.data.remote.network.NetworkResult
 import com.deskvestre.fieldopstracker.data.remote.mappers.toDomain
 import com.deskvestre.fieldopstracker.data.remote.mappers.toDto
-import com.deskvestre.fieldopstracker.data.remote.safeApiCall
+import com.deskvestre.fieldopstracker.data.remote.network.safeApiCall
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import com.deskvestre.fieldopstracker.domain.repository.FieldRecordRepository

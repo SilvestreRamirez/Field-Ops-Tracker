@@ -9,4 +9,5 @@ data class FieldRecord(
     val notes: String,
     val timestamp: Long,
     val isSynced: Boolean = false,
+    val photoUri: String? = null
 )

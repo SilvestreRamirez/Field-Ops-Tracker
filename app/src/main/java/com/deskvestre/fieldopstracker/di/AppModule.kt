@@ -3,6 +3,7 @@ package com.deskvestre.fieldopstracker.di
 import android.content.Context
 import androidx.room.Room
 import com.deskvestre.fieldopstracker.data.local.AppDatabase
+import com.deskvestre.fieldopstracker.data.local.Migrations.Companion.MIGRATION_1_2
 import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import dagger.Module
 import dagger.Provides
@@ -23,7 +24,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "field-tracker"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides

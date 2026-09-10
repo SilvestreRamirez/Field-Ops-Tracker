@@ -13,7 +13,8 @@ fun FieldRecordEntity.toDomain(): FieldRecord {
         gpsLng = gpsLng,
         notes = notes,
         timestamp = timestamp,
-        isSynced = isSynced
+        isSynced = isSynced,
+        photoUri = this.photoUri
     )
 }
 
@@ -26,6 +27,7 @@ fun FieldRecord.toEntity(): FieldRecordEntity {
         gpsLng = gpsLng,
         notes = notes,
         timestamp = timestamp,
-        isSynced = isSynced
+        isSynced = isSynced,
+        photoUri = this.photoUri
     )
 }

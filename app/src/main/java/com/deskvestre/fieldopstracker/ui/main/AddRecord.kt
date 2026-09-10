@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import com.deskvestre.fieldopstracker.ui.viemodel.MainViewModel
 
@@ -35,6 +37,13 @@ fun AddRecord(navController: NavHostController, viewModel: MainViewModel) {
     var notes by remember { mutableStateOf("") }
     var lat by remember { mutableStateOf("") }
     var lng by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
+    val (takePhoto, capturedUri) = CameraLauncher().rememberCameraLauncher(
+        onPhotoTaken = { uri ->
+            photoUri = uri.toString()
+        }
+    )
+    val requestCameraPermission = CameraLauncher().rememberCameraPermission(onGranted = takePhoto)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -57,6 +66,19 @@ fun AddRecord(navController: NavHostController, viewModel: MainViewModel) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+
+            Button(onClick = { requestCameraPermission() }) {
+                Text(if (photoUri == null) "Take photo" else "Take photo again")
+            }
+
+            photoUri?.let { uri ->
+                AsyncImage(
+                    model = uri,
+                    contentDescription = "Record photo",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
+
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
@@ -86,7 +108,8 @@ fun AddRecord(navController: NavHostController, viewModel: MainViewModel) {
                         gpsLng = lng.toDoubleOrNull() ?: 0.0,
                         notes = notes,
                         timestamp = System.currentTimeMillis(),
-                        isSynced = false
+                        isSynced = false,
+                        photoUri = photoUri
                     )
                     viewModel.add(record)
                     navController.popBackStack()

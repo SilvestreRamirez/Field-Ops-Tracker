@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.deskvestre.fieldopstracker.data.local.dao.FieldRecordDao
 import com.deskvestre.fieldopstracker.data.local.entity.FieldRecordEntity
 
-@Database(entities = [FieldRecordEntity::class], version = 1)
+@Database(entities = [FieldRecordEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     //room dao's
     abstract fun fieldRecordDao(): FieldRecordDao

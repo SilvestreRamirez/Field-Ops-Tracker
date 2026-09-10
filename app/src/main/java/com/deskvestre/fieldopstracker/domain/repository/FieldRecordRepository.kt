@@ -1,7 +1,6 @@
 package com.deskvestre.fieldopstracker.domain.repository
 
 
-import com.deskvestre.fieldopstracker.data.remote.NetworkResult
 import com.deskvestre.fieldopstracker.domain.model.FieldRecord
 import com.deskvestre.fieldopstracker.domain.model.SyncResult
 import kotlinx.coroutines.flow.Flow

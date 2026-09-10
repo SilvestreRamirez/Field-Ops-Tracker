@@ -1,4 +1,4 @@
-package com.deskvestre.fieldopstracker.data.remote
+package com.deskvestre.fieldopstracker.data.remote.network
 
 import java.io.IOException
 

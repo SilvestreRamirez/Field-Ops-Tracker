@@ -120,4 +120,7 @@ dependencies {
 
     //DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    //coil
+    implementation(libs.coil.compose)
 }
